@@ -17,12 +17,21 @@ class BookView(ViewSet):
     
   def list(self, request):
     
-    books = Book.objects.all()
-    
+    uid = request.query_params.get('uid', None)
     author = request.query_params.get('author', None)
-    if author is not None:
+    
+    if author is not None and uid is not None:
+      books = Book.objects.all()
+      books = books.filter(uid=uid, author=author)
+    elif uid is not None:
+      books = Book.objects.all()
+      books = books.filter(uid=uid)
+    elif author is not None:
+      books = Book.objects.all()
       books = books.filter(author=author)
-
+    elif author is None and uid is None:
+      books = Book.objects.all()
+        
     serializer = BookSerializer(books, many=True)
     return Response(serializer.data)
   

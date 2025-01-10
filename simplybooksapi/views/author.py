@@ -19,14 +19,25 @@ class AuthorView(ViewSet):
     
   def list(self, request):
     
-    authors = Author.objects.all()
+    try:
+      
+      uid = request.query_params.get('uid', None)
+      favorite = request.query_params.get('favorite', None)
+      
+      if favorite is not None and uid is not None:
+        authors = Author.objects.all()
+        authors = authors.filter(uid=uid, favorite=favorite)
+      elif uid is not None:
+        authors = Author.objects.all()
+        authors = authors.filter(uid=uid)
+      elif favorite is None and uid is None:
+        authors = Author.objects.all()
+      
+      serializer = AuthorSerializer(authors, many=True)
+      return Response(serializer.data)
     
-    favorite = request.query_params.get('favorite', None)
-    if favorite is not None:
-      authors = authors.filter(favorite=favorite)
-    
-    serializer = AuthorSerializer(authors, many=True)
-    return Response(serializer.data)
+    except :
+        return Response({'message': 'Favorite authors can only be queried for specific users'}, status=status.HTTP_401_UNAUTHORIZED)
   
   def create(self, request):
     

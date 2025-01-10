@@ -18,6 +18,11 @@ class BookView(ViewSet):
   def list(self, request):
     
     books = Book.objects.all()
+    
+    author = request.query_params.get('author', None)
+    if author is not None:
+      books = books.filter(author=author)
+
     serializer = BookSerializer(books, many=True)
     return Response(serializer.data)
   

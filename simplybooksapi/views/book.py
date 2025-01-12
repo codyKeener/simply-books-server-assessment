@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from simplybooksapi.models import Book, Author
+from simplybooksapi.models import Book, Author, Genre
 
 class BookView(ViewSet):
   
@@ -19,6 +19,10 @@ class BookView(ViewSet):
     # IF THERE IS A UID, GET THE BOOK THAT MATCHES THE PK AND THE UID (PRIVATE BOOKS)
       else:
         book = Book.objects.get(pk=pk, uid=uid)
+
+      # GET THE GENRE(S) FOR THIS BOOK
+      genres = Genre.objects.filter(bookgenres__book_id=book)
+      book.genres=genres.all()
       
       serializer = BookSerializer(book)
       return Response(serializer.data)
@@ -57,6 +61,11 @@ class BookView(ViewSet):
       # FILTER BOOKS BY SALE IF SALE IS PASSED IN THE QUERY PARAMETERS (WORKS FOR PUBLIC OR PRIVATE BOOKS)  
       if sale is not None:
         books = books.filter(sale=sale)
+      
+      # ADD THE GENRE(S) FOR ALL BOOKS
+      for book in books:
+        genres = Genre.objects.filter(bookgenres__book_id=book)
+        book.genres=genres.all()
         
       serializer = BookSerializer(books, many=True)
       return Response(serializer.data)
@@ -67,21 +76,17 @@ class BookView(ViewSet):
     
     author = Author.objects.get(pk=request.data["author_id"])
     
-    try:
-      book = Book.objects.create(
-        author=author,
-        title=request.data["title"],
-        image=request.data["image"],
-        price=request.data["price"],
-        sale=request.data["sale"],
-        uid=request.data["uid"],
-        description=request.data["description"]
-      )
-      serializer = BookSerializer(book)
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
-    except:
-      # IF ALL VALUES ARE NOT PRESENT IN THE REQUEST, THE BOOK WILL NOT BE CREATED
-      return Response({'message': 'All data points must be provided: author_id, title, image, price, sale, uid, description'}, status=status.HTTP_417_EXPECTATION_FAILED)
+    book = Book.objects.create(
+      author=author,
+      title=request.data["title"],
+      image=request.data["image"],
+      price=request.data["price"],
+      sale=request.data["sale"],
+      uid=request.data["uid"],
+      description=request.data["description"]
+    )
+    serializer = BookSerializer(book)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
   
   def update(self, request, pk):
     
@@ -98,22 +103,18 @@ class BookView(ViewSet):
       return Response({'message': 'Must provide the uid of the user requesting to update the book in the query parameters'}, status=status.HTTP_403_FORBIDDEN)
     # IF THE UID PASSED IN THE QUERY PARAMETERS IS THE SAME AS THE UID OF THE BOOK, UPDATE THE BOOK (PRIVATE BOOKS)
     elif book.uid == uid:
-      try:
-        book.author=author
-        book.title = request.data["title"]
-        book.image = request.data["image"]
-        book.price = request.data["price"]
-        book.sale = request.data["sale"]
-        book.uid = request.data["uid"]
-        book.description=request.data["description"]
-        
-        book.save()
-        
-        serializer = BookSerializer(book)    
-        return Response(serializer.data, status=status.HTTP_200_OK)
-      except:
-        # IF ALL VALUES ARE NOT PRESENT IN THE REQUEST, THE BOOK WILL NOT BE UPDATED
-        return Response({'message': 'All data points must be provided: author_id, title, image, price, sale, uid, description'}, status=status.HTTP_417_EXPECTATION_FAILED)
+      book.author=author
+      book.title = request.data["title"]
+      book.image = request.data["image"]
+      book.price = request.data["price"]
+      book.sale = request.data["sale"]
+      book.uid = request.data["uid"]
+      book.description=request.data["description"]
+      
+      book.save()
+      
+      serializer = BookSerializer(book)    
+      return Response(serializer.data, status=status.HTTP_200_OK)
       
   def destroy(self, request, pk):
     
@@ -126,18 +127,23 @@ class BookView(ViewSet):
       return Response({'message': 'Must provide the uid of the user requesting to delete the book in the query parameters'}, status=status.HTTP_403_FORBIDDEN)
     # IF THE UID PASSED IN THE QUERY PARAMETERS IS THE SAME AS THE UID OF THE BOOK, DELETE THE BOOK (PRIVATE BOOKS)
     elif book.uid == uid:
-      try:
-        book.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
-      except:
-        return Response({'message': 'Check query'}, status=status.HTTP_400_BAD_REQUEST)
+      book.delete()
+      return Response(None, status=status.HTTP_204_NO_CONTENT)
     else:
       # IF THE UID IN THE QUERY PARAMETERS DOES NOT MATCH THE UID OF THE BOOK, RETURN AN ERROR BECAUSE THE USER THAT IS REQUESTING TO DELETE THE BOOK MUST BE THE USER THAT CREATED THE BOOK (PRIVATE BOOKS)
       return Response({'message': 'Only the user that created the author can delete it'}, status=status.HTTP_403_FORBIDDEN)
-  
-class BookSerializer(serializers.ModelSerializer):
+
+
+class GenreSerializer(serializers.ModelSerializer):
   
   class Meta:
+    model = Genre
+    fields = ('id', 'description')
+
+class BookSerializer(serializers.ModelSerializer):
+  
+  genres = GenreSerializer(read_only=True, many=True)
+  class Meta:
     model = Book
-    fields = ('id', 'author', 'title', 'image', 'price', 'sale', 'uid', 'description')
+    fields = ('id', 'author', 'title', 'image', 'price', 'sale', 'uid', 'description', 'genres')
     depth = 1

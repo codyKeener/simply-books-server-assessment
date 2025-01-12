@@ -64,20 +64,16 @@ class AuthorView(ViewSet):
   
   def create(self, request):
     
-    try:
-      author = Author.objects.create(
-        email=request.data["email"],
-        first_name=request.data["first_name"],
-        last_name=request.data["last_name"],
-        image=request.data["image"],
-        favorite=request.data["favorite"],
-        uid=request.data["uid"]
-      )
-      serializer = AuthorSerializer(author)
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
-    except:
-      # IF ALL VALUES ARE NOT PRESENT IN THE REQUEST, THE AUTHOR WILL NOT BE CREATED
-      return Response({'message': 'All data points must be provided: email, first_name, last_name, image, favorite, uid'}, status=status.HTTP_417_EXPECTATION_FAILED)
+    author = Author.objects.create(
+      email=request.data["email"],
+      first_name=request.data["first_name"],
+      last_name=request.data["last_name"],
+      image=request.data["image"],
+      favorite=request.data["favorite"],
+      uid=request.data["uid"]
+    )
+    serializer = AuthorSerializer(author)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
   
   def update(self, request, pk):
     
@@ -92,21 +88,17 @@ class AuthorView(ViewSet):
       return Response({'message': 'Must provide the uid of the user requesting to update the author in the query parameters'}, status=status.HTTP_403_FORBIDDEN)
     # IF THE UID PASSED IN THE QUERY PARAMETERS IS THE SAME AS THE UID OF THE AUTHOR, UPDATE THE AUTHOR (PRIVATE AUTHORS)
     elif author.uid == uid:
-      try:
-        author.email=request.data["email"]
-        author.first_name = request.data["first_name"]
-        author.last_name = request.data["last_name"]
-        author.image = request.data["image"]
-        author.favorite = request.data["favorite"]
-        author.uid = uid
-        
-        author.save()
-        
-        serializer = AuthorSerializer(author)    
-        return Response(serializer.data, status=status.HTTP_200_OK)
-      except:
-        # IF ALL VALUES ARE NOT PRESENT IN THE REQUEST, THE AUTHOR WILL NOT BE UPDATED
-        return Response({'message': 'All data points must be provided: email, first_name, last_name, image, favorite, uid'}, status=status.HTTP_417_EXPECTATION_FAILED)
+      author.email=request.data["email"]
+      author.first_name = request.data["first_name"]
+      author.last_name = request.data["last_name"]
+      author.image = request.data["image"]
+      author.favorite = request.data["favorite"]
+      author.uid = uid
+      
+      author.save()
+      
+      serializer = AuthorSerializer(author)    
+      return Response(serializer.data, status=status.HTTP_200_OK)
     else:
       # IF THE UID IN THE QUERY PARAMETERS DOES NOT MATCH THE UID OF THE AUTHOR, RETURN AN ERROR BECAUSE THE USER THAT IS REQUESTING TO UPDATE THE AUTHOR MUST BE THE USER THAT CREATED THE AUTHOR (PRIVATE AUTHORS)
       return Response({'message': 'Only the user that created the author can update it'}, status=status.HTTP_403_FORBIDDEN)
@@ -122,15 +114,13 @@ class AuthorView(ViewSet):
       return Response({'message': 'Must provide the uid of the user requesting to delete the author in the query parameters'}, status=status.HTTP_403_FORBIDDEN)
     # IF THE UID PASSED IN THE QUERY PARAMETERS IS THE SAME AS THE UID OF THE AUTHOR, DELETE THE AUTHOR (PRIVATE AUTHORS)
     elif author.uid == uid:
-      try:
-        author.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
-      except:
-        return Response({'message': 'Check query'}, status=status.HTTP_400_BAD_REQUEST)
+      author.delete()
+      return Response(None, status=status.HTTP_204_NO_CONTENT)
     else:
       # IF THE UID IN THE QUERY PARAMETERS DOES NOT MATCH THE UID OF THE AUTHOR, RETURN AN ERROR BECAUSE THE USER THAT IS REQUESTING TO DELETE THE AUTHOR MUST BE THE USER THAT CREATED THE AUTHOR (PRIVATE AUTHORS)
       return Response({'message': 'Only the user that created the author can delete it'}, status=status.HTTP_403_FORBIDDEN)
-  
+
+
 class AuthorSerializer(serializers.ModelSerializer):
   
   class Meta:

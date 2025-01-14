@@ -18,7 +18,7 @@ Please see the [API Documentation](https://documenter.getpostman.com/view/350265
 - Create, Read, Update, and Delete bookGenres (many-to-many relationship between books and genres)
 
 ## Video Walkthrough of Simply Books Django server assessment
-[Loom Video Walkthrough](https://www.loom.com/share/13ed4c65e103473f818680ae655ca27b?sid=f64e8102-70fe-4a07-9e68-16b1ea9fefee)
+[Loom Video Walkthrough](https://www.loom.com/share/b3c335e20467441a902e0d0a2ef0e134?sid=b77edf9f-13d7-4f65-bdaf-381ff2e2695a)
 
 ## Relevant Links
 - Please see the [API Documentation](https://documenter.getpostman.com/view/35026527/2sAYQXnYBH)

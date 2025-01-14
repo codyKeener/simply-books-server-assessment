@@ -1,8 +1,52 @@
-# Welcome to the Simply Books server assessment!
+# Welcome to the Simply Books Django server assessment!
 
-This project will be completed in a 1 week sprint of 6 days or less.
+This project was completed in a 1 week sprint of 6 days as an assessment of my understanding of setting up a back end server in Django and Python.
 
 ## Get Started
+
+Please see the [API Documentation](https://documenter.getpostman.com/view/35026527/2sAYQXnYBH)
+
+## About the User
+- The ideal user for this application is anyone who wants to create, read, update, and delete books
+- They want to see books they have added to their library as well as information about the authors of those books
+- The problem this app solves for them is that it allows users to keep track of all of their books and authors
+
+## Features
+- Create, Read, Update, and Delete authors
+- Create, Read, Update, and Delete books
+- Create, Read, Update, and Delete genres
+- Create, Read, Update, and Delete bookGenres (many-to-many relationship between books and genres)
+
+## Video Walkthrough of Simply Books Django server assessment
+[Loom Video Walkthrough](https://www.loom.com/share/13ed4c65e103473f818680ae655ca27b?sid=f64e8102-70fe-4a07-9e68-16b1ea9fefee)
+
+## Relevant Links
+- Please see the [API Documentation](https://documenter.getpostman.com/view/35026527/2sAYQXnYBH)
+
+## Code Snippet
+
+<!-- // Author Model -->
+
+```
+class Author(models.Model):
+  
+  email = models.CharField(max_length=50)
+  first_name = models.CharField(max_length=30)
+  last_name = models.CharField(max_length=30)
+  image = models.URLField()
+  favorite = models.BooleanField()
+  uid = models.CharField(max_length=30)
+```
+
+## Contributors
+- Cody Keener (https://github.com/codyKeener)
+
+## ------------------------------------------------------------------------------------------ ##
+
+## Instructions I followed
+
+- [Simply Books API-Back End RUBRIC](https://docs.google.com/spreadsheets/d/1Ijb2Z6kY-2s4KmTdAwoMiKZ_CFj_FodfEOvrd3K70yc/edit?usp=sharing)
+
 - [BACK END: Definition of Done](#be-definition-of-done)
 - [MVP Guidelines](#mvp-guidelines)
 - [Guide to getting started with this project](#guide-to-getting-started)
@@ -20,8 +64,6 @@ Make sure the project board uses columns like Backlog, In Progress, Testing, and
 1. For any stretch goals, the feature must be functional and demonstrate proper user interaction (e.g., public/private book functionality, simulated purchase).
 1. Any issues or bugs identified during development or testing must be fixed by the developer. All work related to fixes must be ticketed and included on the GitHub project board.
 1. The project board must reflect all tasks, bugs, and updates, with each task being moved through the proper columns (Backlog, In Progress, Testing, Done).
-
-
 
 ### MVP Guidelines
 The Minimum Viable Product (MVP) for the Simply Books project includes:

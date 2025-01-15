@@ -22,6 +22,7 @@ Please see the [API Documentation](https://documenter.getpostman.com/view/350265
 
 ## Relevant Links
 - Please see the [API Documentation](https://documenter.getpostman.com/view/35026527/2sAYQXnYBH)
+- Check out this [Loom Video](https://www.loom.com/share/13ed4c65e103473f818680ae655ca27b?sid=c38638c5-47bd-4738-b3a9-a0f4a36e2cf4) for a demonstration of some of the endpoints in Postman
 
 ## Code Snippet
 

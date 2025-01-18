@@ -6,6 +6,14 @@ This project was completed in a 1 week sprint of 6 days as an assessment of my u
 
 Please see the [API Documentation](https://documenter.getpostman.com/view/35026527/2sAYQXnYBH)
 
+1. Fork this repo
+2. Clone repo to your machine
+3. Activate the Pipenv environment with ```pipenv shell```
+4. Install the dependencies using ```pipenv install```
+5. Open the project in Visual Studio Code
+6. Ensure that the correct interpreter is selected
+7. Run ```python manage.py runserver``` to start the server
+
 ## About the User
 - The ideal user for this application is anyone who wants to create, read, update, and delete books
 - They want to see books they have added to their library as well as information about the authors of those books
